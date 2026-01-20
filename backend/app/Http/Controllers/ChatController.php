@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\ChatSession;
 class ChatController extends Controller
@@ -38,13 +38,14 @@ class ChatController extends Controller
     ], 200);
     }
 
-    public function listAllChats(Request $request){
-        $response = $request->user()
-        ->chatSessions()
-        ->where('visibility', true)
+    public function listAllChats(Request $request)
+    {
+    $userId = $request->user()->id;
+    $response = ChatSession::where('user_id', $userId) 
+        ->orWhere('visibility', true)             
         ->latest()
         ->get();
 
-        return response()->json($response);
+    return response()->json($response);
     }
 }

@@ -24,12 +24,12 @@ class MessageController extends Controller
         ]);
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::timeout(60)->withHeaders([
                 'X-API-KEY' => env('N8N_SECRET_KEY'),
                 'Content-Type' => 'application/json',
             ])->post(env('N8N_WEBHOOK_URL'), [
                 'message' => $validated['message'],
-                'session_id' => $chatSession->id 
+                'session_id' => $chatSession->id
             ]);
 
             if ($response->failed()) {

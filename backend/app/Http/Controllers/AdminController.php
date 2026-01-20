@@ -8,12 +8,13 @@ class AdminController extends Controller
 {
     public function createUsers(Request $request){
         $validated = $request->validate([
-            'username' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'email|unique:users,email',
             'password' => 'required|string|',
         ]);
 
         $validated['role'] = 'user';
+        $validated['is_active'] = true;
         $user = User::create($validated);
 
         return response()->json([

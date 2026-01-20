@@ -8,7 +8,7 @@ class AuthController extends Controller
 {
     public function login(Request $request){
         $creds = $request->validate([
-            'username' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'password' => 'required',
         ]);
 
@@ -21,7 +21,7 @@ class AuthController extends Controller
         return response()->json(['message'=>'Invalid credentials'], 401);
     }
 
-    public function Logout(Request $request){
+    public function logout(Request $request){
         $user = $request->user();
         $user->currentAccessToken()->delete();
 

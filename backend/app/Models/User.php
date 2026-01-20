@@ -47,7 +47,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function chatSession(){
+    public function chatSessions(){
         return $this->hasMany(ChatSession::class);
     }
 }
