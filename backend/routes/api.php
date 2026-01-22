@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
     
     Route::post('/chats/{chatSession}/messages', [MessageController::class, 'sendMessage']);
+    Route::get('/chats/{chatSession}', [ChatController::class, 'getChatHistory']);
 });
 
 

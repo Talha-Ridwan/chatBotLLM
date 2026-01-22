@@ -3,9 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import Dashboard from './pages/Dashboard';
-import AdminRoute from './components/AdminRoute'; // Import your new component
+import AdminRoute from './components/AdminRoute'; 
 
-// Standard Guard for normal users (Inline definition)
 interface ProtectedRouteProps {
   children: React.ReactElement;
 }

@@ -29,7 +29,7 @@ class MessageController extends Controller
                 'Content-Type' => 'application/json',
             ])->post(env('N8N_WEBHOOK_URL'), [
                 'message' => $validated['message'],
-                'session_id' => $chatSession->id
+                'sessionId' => $chatSession->id
             ]);
 
             if ($response->failed()) {

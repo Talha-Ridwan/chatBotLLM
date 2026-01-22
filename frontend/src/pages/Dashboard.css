@@ -1,0 +1,270 @@
+/* Dashboard.css */
+
+/* --- 1. The "Old School" Palette --- */
+:root {
+  --bg-app: #e8e6df;       /* Outer frame (Taupe) */
+  --bg-panel: #fdfbf7;     /* Main writing area (Cream) */
+  --bg-sidebar: #f4f1ea;   /* Sidebar (Darker Cream) */
+  --bg-active: #e6e2d6;    /* Active Item */
+  
+  --border-color: #d8d4c9; /* Soft Borders */
+  
+  --text-main: #2d2d2b;    /* Soft Charcoal */
+  --text-muted: #86847e;   /* Muted Grey/Brown */
+  
+  --accent-primary: #2c3e50; 
+  --accent-red: #c0392b;
+}
+
+/* --- 2. Layout & Reset --- */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-app);
+  font-family: 'Courier New', Courier, monospace; /* Monospace for that retro terminal feel */
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+/* --- 3. Sidebar Styling --- */
+.sidebar {
+  width: 280px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 24px;
+}
+
+.sidebar-header {
+  margin-bottom: 24px;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+/* Chat Items (The Cards) */
+.chat-item {
+  padding: 16px;
+  border-radius: 4px; /* Sharp corners */
+  margin-bottom: 12px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.chat-item:hover {
+  background-color: rgba(0,0,0,0.03);
+}
+
+.chat-item.active {
+  background-color: var(--bg-active);
+  border-color: var(--border-color);
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.05); /* Retro hard shadow */
+}
+
+/* Text Typography */
+.chat-info div {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-main);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-info small {
+  display: block; /* Forces new line */
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- FIX: The "PUBLICDELETE" Issue --- */
+.chat-actions {
+  display: flex;         /* This separates the buttons */
+  gap: 16px;             /* Adds breathing room */
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color); /* Separator line */
+}
+
+.chat-actions button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 10px;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.chat-actions button:hover {
+  color: var(--accent-red);
+  text-decoration: underline;
+}
+
+.sidebar-footer {
+  border-top: 2px solid var(--border-color);
+  padding-top: 24px;
+}
+
+/* --- 4. Main Chat Area --- */
+.main-chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-panel);
+  position: relative;
+}
+
+/* Header */
+.chat-header {
+  height: 70px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background-color: var(--bg-panel);
+}
+
+.chat-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.chat-header span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: var(--bg-active);
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  color: var(--text-muted);
+}
+
+/* Messages Feed */
+.messages-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Message Bubbles - Flat & Retro */
+.message-row {
+  display: flex;
+  width: 100%;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
+.message-row.bot {
+  justify-content: flex-start;
+}
+
+.message-content {
+  max-width: 65%;
+  padding: 14px 20px;
+  border-radius: 2px; /* Very square corners */
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.message-row.user .message-content {
+  background-color: var(--accent-primary);
+  color: #fdfbf7;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.1); /* Distinctive hard shadow */
+}
+
+.message-row.bot .message-content {
+  background-color: #fff;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  box-shadow: 4px 4px 0px var(--border-color); /* Distinctive hard shadow */
+}
+
+/* --- 5. Input Area --- */
+.chat-input {
+  background-color: var(--bg-panel);
+  border-top: 1px solid var(--border-color);
+  padding: 24px 32px;
+}
+
+.chat-input form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.input-wrapper {
+  flex: 1;
+}
+
+/* Targeting the Input component specifically */
+.input-wrapper input {
+  width: 100%;
+  background-color: var(--bg-sidebar);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text-main);
+  transition: border-color 0.2s;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background-color: #fff;
+}
+
+/* --- 6. Styling your existing <Button> --- */
+/* Since we can't change the JSX to an icon, we style the "Send" button to look cool */
+.button-wrapper button {
+  height: 52px; /* Match input height */
+  padding: 0 30px !important;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: bold;
+  font-size: 12px;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.2); /* Retro clicky button feel */
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.button-wrapper button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}

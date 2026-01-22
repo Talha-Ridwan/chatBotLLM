@@ -38,14 +38,33 @@ class ChatController extends Controller
     ], 200);
     }
 
-    public function listAllChats(Request $request)
+public function listAllChats(Request $request)
     {
-    $userId = $request->user()->id;
-    $response = ChatSession::where('user_id', $userId) 
-        ->orWhere('visibility', true)             
-        ->latest()
-        ->get();
+        $userId = $request->user()->id;
+        
+        $response = ChatSession::with('user') 
+            ->where('user_id', $userId) 
+            ->orWhere('visibility', true)             
+            ->latest()
+            ->get();
 
-    return response()->json($response);
+        return response()->json($response);
+    }
+
+public function getChatHistory(Request $request, ChatSession $chatSession){
+        $userID = $request->user()->id;
+
+        if($userID != $chatSession->user_id && !$chatSession->visibility){
+            return response()->json(['error'=>'unauthorized'], 403);
+        }
+
+        $messages = $chatSession->messages()
+                                ->orderBy('created_at', 'asc')
+                                ->get();
+
+        return response()->json([
+            'chat' => $chatSession,
+            'messages' => $messages
+        ]);
     }
 }
