@@ -24,7 +24,7 @@ class MessageController extends Controller
         ]);
 
         try {
-            $response = Http::timeout(60)->withHeaders([
+            $response = Http::timeout(600)->withHeaders([
                 'X-API-KEY' => env('N8N_SECRET_KEY'),
                 'Content-Type' => 'application/json',
             ])->post(env('N8N_WEBHOOK_URL'), [
