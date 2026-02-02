@@ -28,6 +28,15 @@ Route::middleware('auth:sanctum')->group(function(){
     
     Route::post('/chats/{chatSession}/messages', [MessageController::class, 'sendMessage']);
     Route::get('/chats/{chatSession}', [ChatController::class, 'getChatHistory']);
+
+    // Existing route
+Route::post('/chats/{chatSession}/messages', [MessageController::class, 'sendMessage']);
+
+// NEW: For Frontend Polling
+Route::get('/messages/{messageId}/status', [MessageController::class, 'checkStatus']);
+
+// NEW: For n8n Callback (Must be accessible from outside, so typically no auth middleware or use an API key)
+Route::post('/n8n/callback', [MessageController::class, 'handleCallback'])->name('api.n8n.callback');
 });
 
 
