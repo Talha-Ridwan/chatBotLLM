@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import api from '../api/axios';
 import { logoutUser } from '../api/auth';
 import Button from '../components/Button';
@@ -64,7 +66,7 @@ const Dashboard = () => {
     }
   };
 
-const fetchMessages = async (chatId: number) => {
+  const fetchMessages = async (chatId: number) => {
     setLoadingMessages(true);
     setMessages([]);
     try {
@@ -93,9 +95,6 @@ const fetchMessages = async (chatId: number) => {
   const handleCreateChat = async () => {
     try {
       const response = await api.post('/createChat');
-      
-      // FIX: Manually attach the current user details to the new chat object
-      // This ensures the UI shows your name immediately without a refresh
       const newChat: ChatSession = {
         ...response.data,
         user: {
@@ -153,8 +152,6 @@ const fetchMessages = async (chatId: number) => {
     const currentMsg = inputMessage;
     setInputMessage('');
     setSending(true);
-
-    // Optimistic Update
     setMessages(prev => [...prev, { sender: 'user', text: currentMsg }]);
 
     try {
@@ -198,12 +195,6 @@ const fetchMessages = async (chatId: number) => {
             >
               <div className="chat-info">
                 <div className="chat-title">{chat.title || "Unnamed Session"}</div>
-                
-                {/* DISPLAY LOGIC:
-                   1. Try chat.user.name (from backend 'with user')
-                   2. If missing, check if it's MY chat, then use currentUserName
-                   3. Fallback to 'Unknown'
-                */}
                 <small className="chat-author">
                   by {chat.user?.name || (chat.user_id === currentUserId ? currentUserName : 'Unknown')}
                 </small>
@@ -213,9 +204,8 @@ const fetchMessages = async (chatId: number) => {
                 <button onClick={(e) => handleToggleVisibility(chat.id, e)}>
                   {chat.visibility ? "Public" : "Private"}
                 </button>
-                
                 <button onClick={(e) => handleDeleteChat(chat.id, e)} className="delete-btn">
-                  Delete
+                  Del
                 </button>
               </div>
             </div>
@@ -272,9 +262,37 @@ const fetchMessages = async (chatId: number) => {
                       <span className="sender-label">
                         {msg.sender === 'user' ? 'YOU' : 'SYSTEM'}
                       </span>
-                      <div className="message-content">
-                        {msg.text}
+                      
+                      {/* --- UPDATED: MARKDOWN RENDERING --- */}
+                      <div className="message-content markdown-body">
+                         <ReactMarkdown 
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                                // Custom renderer for code blocks to make JSON look nice
+                                code({node, inline, className, children, ...props}: any) {
+                                    const match = /language-(\w+)/.exec(className || '')
+                                    return !inline ? (
+                                    <div className="code-block">
+                                        <div className="code-header">
+                                            <span>{match ? match[1] : 'code'}</span>
+                                        </div>
+                                        <pre className={className}>
+                                            <code {...props}>{children}</code>
+                                        </pre>
+                                    </div>
+                                    ) : (
+                                    <code className="inline-code" {...props}>
+                                        {children}
+                                    </code>
+                                    )
+                                }
+                            }}
+                         >
+                             {msg.text}
+                         </ReactMarkdown>
                       </div>
+                      {/* ----------------------------------- */}
+
                     </div>
                   </div>
                 ))

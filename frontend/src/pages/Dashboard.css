@@ -268,3 +268,101 @@
   justify-content: center;
   color: var(--text-muted);
 }
+
+/* --- 7. Markdown & Code Block Styling (Add to bottom) --- */
+
+/* Reset typography inside the markdown container */
+.message-content {
+  /* Inherits font-family from body (Courier New) */
+  line-height: 1.6;
+}
+
+/* Remove default margins so text fits cleanly in the bubble */
+.message-content p {
+  margin: 0 0 10px 0;
+}
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- The Dark Terminal Code Block --- */
+.code-block {
+  background-color: #1a1a1a;  /* Deep dark grey, almost black */
+  border: 1px solid var(--text-main); /* solid charcoal border */
+  border-radius: 2px;         /* Sharp corners to match your theme */
+  margin: 14px 0;
+  overflow: hidden;
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.15); /* Retro hard shadow */
+}
+
+/* The "Window Title" bar of the code block */
+.code-header {
+  background-color: #333;
+  padding: 6px 12px;
+  font-size: 11px;
+  color: #fff;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #555;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* The actual code area */
+.code-block pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  color: #e0e0e0;             /* Off-white text for readability */
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* --- Inline Code (e.g. `const x = 1`) --- */
+.inline-code {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* Inline code needs different styling depending on if it's YOU or the BOT */
+
+/* If BOT sent it (White bubble) -> Grey background code */
+.message-row.bot .inline-code {
+  background-color: #f0f0f0;
+  border: 1px solid #dcdcdc;
+  color: #c0392b; /* Accent red for tech terms */
+}
+
+/* If YOU sent it (Dark Blue bubble) -> Semi-transparent dark code */
+.message-row.user .inline-code {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0,0,0,0.2);
+  color: #fff;
+}
+
+/* --- Lists inside messages --- */
+.message-content ul, .message-content ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.message-content li {
+  margin-bottom: 4px;
+}
+
+/* --- Headings inside messages --- */
+.message-content h1, 
+.message-content h2, 
+.message-content h3 {
+  font-weight: bold;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 4px;
+}
