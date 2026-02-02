@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -42,6 +42,10 @@ const Dashboard = () => {
   // --- STATE ---
   const [chats, setChats] = useState<ChatSession[]>([]);
   const [activeChat, setActiveChat] = useState<ChatSession | null>(null);
+  
+  // Ref to track active chat inside the async polling loop
+  const activeChatRef = useRef<number | null>(null);
+
   const [messages, setMessages] = useState<Message[]>([]);
   
   const [loading, setLoading] = useState(false);
@@ -53,6 +57,11 @@ const Dashboard = () => {
   useEffect(() => {
     fetchChats();
   }, []);
+
+  // Sync Ref with State
+  useEffect(() => {
+    activeChatRef.current = activeChat?.id || null;
+  }, [activeChat]);
 
   // --- API CALLS ---
   const fetchChats = async () => {
@@ -139,26 +148,79 @@ const Dashboard = () => {
     }
   };
 
+  // --- NEW: POLLING LOGIC ---
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim() || !activeChat) return;
 
     const currentMsg = inputMessage;
+    const currentChatId = activeChat.id;
+
     setInputMessage('');
     setSending(true);
+    
+    // Optimistically add user message
     setMessages(prev => [...prev, { sender: 'user', text: currentMsg }]);
 
     try {
-      const response = await api.post(`/chats/${activeChat.id}/messages`, {
+      // 1. Initial Request (Fire and Forget)
+      const response = await api.post(`/chats/${currentChatId}/messages`, {
         message: currentMsg
       });
-      const botReply = response.data.bot_message;
-      setMessages(prev => [...prev, { sender: 'bot', text: botReply }]);
+
+      // 2. Start Polling
+      const botMessageId = response.data.bot_message_id;
+      if (!botMessageId) throw new Error("No message ID returned");
+
+      pollForResponse(botMessageId, currentChatId);
+
     } catch (error) {
-      setMessages(prev => [...prev, { sender: 'bot', text: "Error: AI Service Unavailable" }]);
-    } finally {
+      console.error(error);
+      setMessages(prev => [...prev, { sender: 'bot', text: "Error: Could not send message." }]);
       setSending(false);
     }
+  };
+
+  const pollForResponse = async (messageId: number, chatId: number) => {
+    const POLL_INTERVAL = 3000; // 3 Seconds
+    const MAX_ATTEMPTS = 100;   // 5 Minutes max (100 * 3s)
+    let attempts = 0;
+
+    const checkStatus = async () => {
+        // Stop if user switched chats or timed out
+        if (activeChatRef.current !== chatId) return;
+        if (attempts >= MAX_ATTEMPTS) {
+            setMessages(prev => [...prev, { sender: 'bot', text: "Error: Request Timed Out." }]);
+            setSending(false);
+            return;
+        }
+
+        attempts++;
+
+        try {
+            const res = await api.get(`/messages/${messageId}/status`);
+            const status = res.data.status;
+
+            if (status === 'completed') {
+                // Success! Update UI
+                setMessages(prev => [...prev, { sender: 'bot', text: res.data.text }]);
+                setSending(false);
+            } else if (status === 'failed') {
+                // Failure
+                setMessages(prev => [...prev, { sender: 'bot', text: "Error: AI generation failed." }]);
+                setSending(false);
+            } else {
+                // Still processing... check again in 3s
+                setTimeout(checkStatus, POLL_INTERVAL);
+            }
+        } catch (error) {
+            // Network glitch? Try again nicely
+            setTimeout(checkStatus, POLL_INTERVAL);
+        }
+    };
+
+    // Kick off the loop
+    setTimeout(checkStatus, POLL_INTERVAL);
   };
 
   const onSelectChat = (chat: ChatSession) => {
@@ -276,7 +338,7 @@ const Dashboard = () => {
                   </div>
                 ))
               )}
-              {sending && <p className="typing-indicator">System is typing...</p>}
+              {sending && <p className="typing-indicator">System is thinking...</p>}
             </section>
 
             <footer className="chat-input">
