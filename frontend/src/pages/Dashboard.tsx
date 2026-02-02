@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 import api from '../api/axios';
 import { logoutUser } from '../api/auth';
 import Button from '../components/Button';
@@ -33,7 +36,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const userRole = localStorage.getItem('role');
   
-  // Get current user details from storage for immediate UI updates
   const currentUserId = parseInt(localStorage.getItem('user_id') || '0'); 
   const currentUserName = localStorage.getItem('user_name') || localStorage.getItem('name') || 'You';
 
@@ -77,7 +79,6 @@ const Dashboard = () => {
         if (msg.sender === 'human' || msg.sender === 'user') {
           normalizedSender = 'user';
         }
-        
         return {
           sender: normalizedSender, 
           text: msg.message || msg.content || msg.text 
@@ -97,12 +98,8 @@ const Dashboard = () => {
       const response = await api.post('/createChat');
       const newChat: ChatSession = {
         ...response.data,
-        user: {
-            id: currentUserId,
-            name: currentUserName
-        }
+        user: { id: currentUserId, name: currentUserName }
       };
-      
       setChats([newChat, ...chats]);
       setActiveChat(newChat);
       setMessages([]);
@@ -114,7 +111,6 @@ const Dashboard = () => {
   const handleDeleteChat = async (chatId: number, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!window.confirm("Delete this chat?")) return;
-
     try {
       await api.delete(`/chats/${chatId}`);
       setChats(chats.filter(c => c.id !== chatId));
@@ -132,11 +128,9 @@ const Dashboard = () => {
     try {
       const response = await api.patch(`/chats/${chatId}/visibility`);
       const newVisibility = response.data.visibility;
-
       setChats(chats.map(chat => 
         chat.id === chatId ? { ...chat, visibility: newVisibility } : chat
       ));
-      
       if (activeChat?.id === chatId) {
         setActiveChat(prev => prev ? { ...prev, visibility: newVisibility } : null);
       }
@@ -158,10 +152,8 @@ const Dashboard = () => {
       const response = await api.post(`/chats/${activeChat.id}/messages`, {
         message: currentMsg
       });
-
       const botReply = response.data.bot_message;
       setMessages(prev => [...prev, { sender: 'bot', text: botReply }]);
-      
     } catch (error) {
       setMessages(prev => [...prev, { sender: 'bot', text: "Error: AI Service Unavailable" }]);
     } finally {
@@ -215,18 +207,10 @@ const Dashboard = () => {
         <div className="sidebar-footer">
             {userRole === 'admin' && (
                 <div style={{ marginBottom: '10px' }}>
-                    <Button 
-                        text="Admin Panel" 
-                        onClick={() => navigate('/admin')} 
-                        color="#673ab7" 
-                    />
+                    <Button text="Admin Panel" onClick={() => navigate('/admin')} color="#673ab7" />
                 </div>
             )}
-            <Button 
-                text="Logout" 
-                onClick={handleLogout} 
-                color="#e74c3c" 
-            />
+            <Button text="Logout" onClick={handleLogout} color="#e74c3c" />
         </div>
       </aside>
 
@@ -263,23 +247,21 @@ const Dashboard = () => {
                         {msg.sender === 'user' ? 'YOU' : 'SYSTEM'}
                       </span>
                       
-                      {/* --- UPDATED: MARKDOWN RENDERING --- */}
                       <div className="message-content markdown-body">
                          <ReactMarkdown 
+                            children={msg.text}
                             remarkPlugins={[remarkGfm]}
                             components={{
-                                // Custom renderer for code blocks to make JSON look nice
                                 code({node, inline, className, children, ...props}: any) {
                                     const match = /language-(\w+)/.exec(className || '')
-                                    return !inline ? (
-                                    <div className="code-block">
-                                        <div className="code-header">
-                                            <span>{match ? match[1] : 'code'}</span>
-                                        </div>
-                                        <pre className={className}>
-                                            <code {...props}>{children}</code>
-                                        </pre>
-                                    </div>
+                                    return !inline && match ? (
+                                    <SyntaxHighlighter
+                                        {...props}
+                                        children={String(children).replace(/\n$/, '')}
+                                        style={vscDarkPlus}
+                                        language={match[1]}
+                                        PreTag="div"
+                                    />
                                     ) : (
                                     <code className="inline-code" {...props}>
                                         {children}
@@ -287,11 +269,8 @@ const Dashboard = () => {
                                     )
                                 }
                             }}
-                         >
-                             {msg.text}
-                         </ReactMarkdown>
+                         />
                       </div>
-                      {/* ----------------------------------- */}
 
                     </div>
                   </div>
@@ -316,19 +295,8 @@ const Dashboard = () => {
                     className="send-icon-button"
                     disabled={sending || !activeChat}
                   >
-                    {sending ? (
-                        <span className="spinner">...</span>
-                    ) : (
-                        <svg 
-                        width="20" 
-                        height="20" 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        strokeWidth="2" 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round"
-                        >
+                    {sending ? <span className="spinner">...</span> : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                         </svg>

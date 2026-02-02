@@ -1,17 +1,12 @@
-/* Dashboard.css */
-
 /* --- 1. The "Old School" Palette --- */
 :root {
   --bg-app: #e8e6df;       /* Outer frame (Taupe) */
   --bg-panel: #fdfbf7;     /* Main writing area (Cream) */
   --bg-sidebar: #f4f1ea;   /* Sidebar (Darker Cream) */
   --bg-active: #e6e2d6;    /* Active Item */
-  
   --border-color: #d8d4c9; /* Soft Borders */
-  
   --text-main: #2d2d2b;    /* Soft Charcoal */
   --text-muted: #86847e;   /* Muted Grey/Brown */
-  
   --accent-primary: #2c3e50; 
   --accent-red: #c0392b;
 }
@@ -22,7 +17,7 @@
   height: 100vh;
   width: 100vw;
   background-color: var(--bg-app);
-  font-family: 'Courier New', Courier, monospace; /* Monospace for that retro terminal feel */
+  font-family: 'Courier New', Courier, monospace;
   color: var(--text-main);
   overflow: hidden;
 }
@@ -46,15 +41,13 @@
   flex: 1;
   overflow-y: auto;
   margin-bottom: 20px;
-  /* Custom scrollbar */
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
 }
 
-/* Chat Items (The Cards) */
 .chat-item {
   padding: 16px;
-  border-radius: 4px; /* Sharp corners */
+  border-radius: 4px;
   margin-bottom: 12px;
   border: 1px solid transparent;
   transition: all 0.2s ease;
@@ -68,10 +61,9 @@
 .chat-item.active {
   background-color: var(--bg-active);
   border-color: var(--border-color);
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.05); /* Retro hard shadow */
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
 }
 
-/* Text Typography */
 .chat-info div {
   font-weight: 600;
   font-size: 14px;
@@ -83,20 +75,19 @@
 }
 
 .chat-info small {
-  display: block; /* Forces new line */
+  display: block;
   font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* --- FIX: The "PUBLICDELETE" Issue --- */
 .chat-actions {
-  display: flex;         /* This separates the buttons */
-  gap: 16px;             /* Adds breathing room */
+  display: flex;
+  gap: 16px;
   margin-top: 12px;
   padding-top: 10px;
-  border-top: 1px dashed var(--border-color); /* Separator line */
+  border-top: 1px dashed var(--border-color);
 }
 
 .chat-actions button {
@@ -131,7 +122,6 @@
   position: relative;
 }
 
-/* Header */
 .chat-header {
   height: 70px;
   border-bottom: 1px solid var(--border-color);
@@ -159,7 +149,6 @@
   color: var(--text-muted);
 }
 
-/* Messages Feed */
 .messages-feed {
   flex: 1;
   overflow-y: auto;
@@ -169,39 +158,50 @@
   gap: 24px;
 }
 
-/* Message Bubbles - Flat & Retro */
 .message-row {
   display: flex;
   width: 100%;
 }
 
-.message-row.user {
-  justify-content: flex-end;
-}
+.message-row.user { justify-content: flex-end; }
+.message-row.bot { justify-content: flex-start; }
 
-.message-row.bot {
-  justify-content: flex-start;
-}
-
-.message-content {
+.message-stack {
+  display: flex;
+  flex-direction: column;
   max-width: 65%;
+}
+
+.sender-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  color: var(--text-muted);
+  font-weight: bold;
+}
+
+.message-row.user .sender-label { align-self: flex-end; }
+
+/* Markdown Container */
+.message-content {
   padding: 14px 20px;
-  border-radius: 2px; /* Very square corners */
+  border-radius: 2px;
   font-size: 15px;
   line-height: 1.6;
+  overflow-wrap: break-word;
 }
 
 .message-row.user .message-content {
   background-color: var(--accent-primary);
   color: #fdfbf7;
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.1); /* Distinctive hard shadow */
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
 }
 
 .message-row.bot .message-content {
   background-color: #fff;
   border: 1px solid var(--border-color);
   color: var(--text-main);
-  box-shadow: 4px 4px 0px var(--border-color); /* Distinctive hard shadow */
+  box-shadow: 4px 4px 0px var(--border-color);
 }
 
 /* --- 5. Input Area --- */
@@ -217,11 +217,8 @@
   align-items: flex-end;
 }
 
-.input-wrapper {
-  flex: 1;
-}
+.input-wrapper { flex: 1; }
 
-/* Targeting the Input component specifically */
 .input-wrapper input {
   width: 100%;
   background-color: var(--bg-sidebar);
@@ -240,10 +237,8 @@
   background-color: #fff;
 }
 
-/* --- 6. Styling your existing <Button> --- */
-/* Since we can't change the JSX to an icon, we style the "Send" button to look cool */
 .button-wrapper button {
-  height: 52px; /* Match input height */
+  height: 52px;
   padding: 0 30px !important;
   font-family: inherit;
   text-transform: uppercase;
@@ -251,7 +246,7 @@
   font-weight: bold;
   font-size: 12px;
   border-radius: 2px;
-  box-shadow: 3px 3px 0px rgba(0,0,0,0.2); /* Retro clicky button feel */
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
@@ -269,15 +264,41 @@
   color: var(--text-muted);
 }
 
-/* --- 7. Markdown & Code Block Styling (Add to bottom) --- */
+/* --- 6. AUTO MARKDOWN & CODE STYLING --- */
 
-/* Reset typography inside the markdown container */
-.message-content {
-  /* Inherits font-family from body (Courier New) */
-  line-height: 1.6;
+/* Code Blocks generated by React Syntax Highlighter */
+.message-content div[class*="language-"], 
+.message-content pre {
+  margin: 15px 0 !important;
+  border-radius: 4px !important;
+  font-family: 'Consolas', 'Monaco', monospace !important;
+  font-size: 0.9em !important;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.1) !important;
+  border: 1px solid var(--text-main) !important;
 }
 
-/* Remove default margins so text fits cleanly in the bubble */
+/* Inline Code (e.g. `this`) */
+.inline-code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.9em;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* Inline Code Colors */
+.message-row.bot .inline-code {
+  background-color: #f0f0f0;
+  border: 1px solid #dcdcdc;
+  color: #c0392b; /* Accent Red */
+}
+
+.message-row.user .inline-code {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0,0,0,0.2);
+  color: #fff;
+}
+
+/* General Text Elements */
 .message-content p {
   margin: 0 0 10px 0;
 }
@@ -285,76 +306,6 @@
   margin-bottom: 0;
 }
 
-/* --- The Dark Terminal Code Block --- */
-.code-block {
-  background-color: #1a1a1a;  /* Deep dark grey, almost black */
-  border: 1px solid var(--text-main); /* solid charcoal border */
-  border-radius: 2px;         /* Sharp corners to match your theme */
-  margin: 14px 0;
-  overflow: hidden;
-  box-shadow: 3px 3px 0px rgba(0,0,0,0.15); /* Retro hard shadow */
-}
-
-/* The "Window Title" bar of the code block */
-.code-header {
-  background-color: #333;
-  padding: 6px 12px;
-  font-size: 11px;
-  color: #fff;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: 1px solid #555;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* The actual code area */
-.code-block pre {
-  margin: 0;
-  padding: 16px;
-  overflow-x: auto;
-  color: #e0e0e0;             /* Off-white text for readability */
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* --- Inline Code (e.g. `const x = 1`) --- */
-.inline-code {
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 0.9em;
-  padding: 2px 6px;
-  border-radius: 2px;
-}
-
-/* Inline code needs different styling depending on if it's YOU or the BOT */
-
-/* If BOT sent it (White bubble) -> Grey background code */
-.message-row.bot .inline-code {
-  background-color: #f0f0f0;
-  border: 1px solid #dcdcdc;
-  color: #c0392b; /* Accent red for tech terms */
-}
-
-/* If YOU sent it (Dark Blue bubble) -> Semi-transparent dark code */
-.message-row.user .inline-code {
-  background-color: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(0,0,0,0.2);
-  color: #fff;
-}
-
-/* --- Lists inside messages --- */
-.message-content ul, .message-content ol {
-  margin: 8px 0;
-  padding-left: 24px;
-}
-
-.message-content li {
-  margin-bottom: 4px;
-}
-
-/* --- Headings inside messages --- */
 .message-content h1, 
 .message-content h2, 
 .message-content h3 {
@@ -365,4 +316,15 @@
   text-transform: uppercase;
   border-bottom: 1px dashed var(--border-color);
   padding-bottom: 4px;
+}
+
+.message-content ul, .message-content ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.message-content a {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: bold;
 }
